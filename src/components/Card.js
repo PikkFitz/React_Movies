@@ -91,6 +91,7 @@ const Card = ({ movie }) => {  // { movie } --> Les accolades sont nécessaires 
 
     const deleteStorage = () => {
         let storedData = window.localStorage.movies.split(",");  // On sépare les id des films à chaque virgule et on les place dans un tableau
+        // eslint-disable-next-line
         let newData = storedData.filter((id) => id != movie.id)  // On filtre par id (tous les films dans storedData sauf celui avec l'id du film à supprimer)
         window.localStorage.movies = newData;  // on remplace le localStorage.movies par newData
     }
