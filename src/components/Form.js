@@ -14,6 +14,7 @@ const Form = () => {
         axios
             .get(`https://api.themoviedb.org/3/search/movie?api_key=fb980dda3a2daa2ea308bd7153006b67&query=${search}&language=fr-FR`)  
             // Lien de l'API avec une recherche --> ${search} = recherche
+            // Copier l'url dans un navigateur pour voir comment sont retournées les données
             .then((res) => setMoviesData(res.data.results));
     }, [search]);  // Avec le callback [search] --> On relance la recherche à chaque fois que search est modifiée (car onChange dans l'input)
 

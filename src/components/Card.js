@@ -86,7 +86,13 @@ const Card = ({ movie }) => {  // { movie } --> Les accolades sont nécessaires 
             storedData.push(movie.id);  // On ajoute l'id du film à storedData (sans écraser car "push")
             window.localStorage.movies = storedData;  // Et on stock storedData dans le local storage (window.localStorage.movies)
         }
-        
+
+    }
+
+    const deleteStorage = () => {
+        let storedData = window.localStorage.movies.split(",");  // On sépare les id des films à chaque virgule et on les place dans un tableau
+        let newData = storedData.filter((id) => id != movie.id)  // On filtre par id (tous les films dans storedData sauf celui avec l'id du film à supprimer)
+        window.localStorage.movies = newData;  // on remplace le localStorage.movies par newData
     }
 
     return (
@@ -102,16 +108,37 @@ const Card = ({ movie }) => {  // { movie } --> Les accolades sont nécessaires 
             {/* DATE */}
             {movie.release_date ? <h5>Sorti le : {dateFormater(movie.release_date)}</h5> : null}
             {/* NOTE */}
-            <h4>{movie.vote_average}/10 <span>⭐</span></h4>
+            <h4>{movie.vote_average.toFixed(1)}/10 <span>⭐</span></h4>  {/* .toFixed(1) --> pour arrondir à 1 chiffre après la virgule */}
             {/* GENRE */}
             <ul>
-                {movie.genre_ids ? genreFinder() : null}
+                {movie.genre_ids ? 
+                genreFinder() 
+                : 
+                movie.genres.map((genre) => (
+                    <li key={genre}>{genre.name}</li>
+                ))}
             </ul>
+            {/* Car les données concernant le genre ne sont pas appelées de la la même manière avec :
+            `https://api.themoviedb.org/3/search/movie?api_key=fb980dda3a2daa2ea308bd7153006b67&query=${search}&language=fr-FR` --> Utilisée par recherche (page d'accueil)
+            Ou
+            `https://api.themoviedb.org/3/movie/${moviesId[i]}?api_key=fb980dda3a2daa2ea308bd7153006b67` --> Utilisée par id (page coups de coeur) */}
+
             {/* SYNOPSIS */}
             {movie.overview ? <h3>Synopsis</h3> : ""}
             <p>{movie.overview}</p>
             {/* BOUTON COUP DE COEUR */}
-            <div className="btn" onClick={() => addStorage()}>Ajouter aux coups de coeur</div>
+            {movie.genre_ids ? (  // Car les données concernant le genre ne sont pas appelées de la la même manière avec :
+                // `https://api.themoviedb.org/3/search/movie?api_key=fb980dda3a2daa2ea308bd7153006b67&query=${search}&language=fr-FR` --> Utilisée par recherche (page d'accueil)
+                // Ou
+                // `https://api.themoviedb.org/3/movie/${moviesId[i]}?api_key=fb980dda3a2daa2ea308bd7153006b67` --> Utilisée par id (page coups de coeur)
+                <div className="btn" onClick={() => addStorage()}>Ajouter aux coups de coeur</div>
+            ) : (
+                <div className="btn" onClick={() => {
+                    deleteStorage();
+                    window.location.reload();  // Pour recharger la page
+                }}>Supprimer de la liste</div>
+            )}
+
 
         </div>
     );
